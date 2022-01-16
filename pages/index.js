@@ -1,6 +1,4 @@
 import Head from 'next/head';
-import Image from 'next/image';
-import styles from '../styles/Home.module.css';
 
 export default function Home() {
   return (
@@ -10,7 +8,9 @@ export default function Home() {
         <meta name='Nextjs Blog' content='This is Blog created with nextjs' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-
+      <main>
+        <h1>My Blog</h1>
+      </main>
       <footer className='text-2xl text-red-800 text-center'>
         Powered by M.Daud
       </footer>
