@@ -12,7 +12,7 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <main>
-        <Text color='red.600' fontWeight='bold'>
+        <Text as='h1' color='red.600' fontWeight='bold'>
           My Blog
         </Text>
         {blogPosts.map((item) => {
@@ -23,7 +23,7 @@ export default function Home() {
                   <a>{item.title}</a>
                 </Link>
               </h2>
-              <p>{item.date.toString()}</p>
+              <p>{item.date}</p>
               <p>{item.content}</p>
             </Box>
           );
