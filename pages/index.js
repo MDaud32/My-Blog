@@ -1,21 +1,51 @@
-import { Box, Text } from '@chakra-ui/react';
 import Head from 'next/head';
-import BlogPostList from '../component/blogList';
-import { blogPosts } from '../lib/data';
+import Link from 'next/link';
+import { format, parseISO } from 'date-fns';
+import { getAllPosts } from '../lib/data';
 
-export default function Home() {
+export default function Home({ posts }) {
   return (
-    <Box className=''>
+    <div>
       <Head>
-        <title>My Blog</title>
-        <meta name='Nextjs Blog' content='This is Blog created with nextjs' />
-        <link rel='icon' href='/favicon.ico' />
+        <title>Create Next App</title>
+        <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className='w-8/12 text-center mx-auto'>
-        {blogPosts.map((item) => (
-          <BlogPostList key={item.slug} {...item} />
+
+      <div className="space-y-4">
+        {posts.map((item) => (
+          <BlogListItem key={item.slug} {...item} />
         ))}
-      </main>
-    </Box>
+      </div>
+    </div>
+  );
+}
+
+export async function getStaticProps() {
+  const allPosts = getAllPosts();
+  return {
+    props: {
+      posts: allPosts.map(({ data, content, slug }) => ({
+        ...data,
+        date: data.date.toISOString(),
+        content,
+        slug,
+      })),
+    },
+  };
+}
+
+function BlogListItem({ slug, title, date, content }) {
+  return (
+    <div className="border border-gray-100 shadow hover:shadow-md hover:border-gray-200 rounded-md p-4 transition duration-200 ease-in">
+      <div>
+        <Link href={`/blog/${slug}`}>
+          <a className="font-bold">{title}</a>
+        </Link>
+      </div>
+      <div className="text-gray-600 text-xs">
+        {format(parseISO(date), 'MMMM do, uuu')}
+      </div>
+      <div>{content.substr(0, 300)}</div>
+    </div>
   );
 }

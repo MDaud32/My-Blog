@@ -1,59 +1,53 @@
-import { Box, Text } from '@chakra-ui/react';
 import Head from 'next/head';
-import { blogPosts } from '../../lib/data';
+import { format, parseISO } from 'date-fns';
+import { serialize } from 'next-mdx-remote/serialize';
+import { MDXRemote } from 'next-mdx-remote';
 
-export default function BlogPost({ title, date, content }) {
+import { getAllPosts } from '../../lib/data';
+
+export default function BlogPage({ title, date, content }) {
+  const hydratedContent = MDXRemote(content);
+
   return (
-    <div className='w-8/12 text-center mx-auto '>
+    <div>
       <Head>
-        <title>posts</title>
-        <meta name='About' content='This is Blog created with nextjs' />
+        <title>{title}</title>
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <Box
-        textAlign={'center'}
-        border={'2px'}
-        borderColor={'blackAlpha.400'}
-        my='6'
-        borderRadius={'3xl'}
-        h={{ base: 'fit-content' }}
-        px='4'
-        py={'4'}
-        shadow={'md'}
-      >
-        <Text
-          as='h1'
-          textColor={'gray.600'}
-          fontSize='xl'
-          fontWeight={'semibold'}
-          pb='3'
-        >
-          {title}
-        </Text>
-        <Text as='p' textColor={'gray.500'}>
-          {date}
-        </Text>
-        <Text as='p' textColor={'gray.600'} pt='3'>
-          {content}
-        </Text>
-      </Box>
+      <main>
+        <div className='border-b-2 border-gray-200 mb-4'>
+          <h2 className='text-3xl font-bold'>{title}</h2>
+          <div className='text-gray-600 text-md'>
+            {format(parseISO(date), 'MMMM do, uuu')}
+          </div>
+        </div>
+        <div className='prose'>{hydratedContent}</div>
+      </main>
     </div>
   );
 }
 
 export async function getStaticProps(context) {
   const { params } = context;
+  const allPosts = getAllPosts();
+  const { data, content } = allPosts.find((item) => item.slug === params.slug);
+  const mdxSource = await serialize(content);
+
   return {
-    props: blogPosts.find((item) => item.slug === params.slug),
+    props: {
+      ...data,
+      date: data.date.toISOString(),
+      content: mdxSource,
+    },
   };
 }
 
 export async function getStaticPaths() {
   return {
-    paths: blogPosts.map((item) => ({
+    paths: getAllPosts().map((post) => ({
       params: {
-        slug: item.slug,
+        slug: post.slug,
       },
     })),
     fallback: false,
