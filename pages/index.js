@@ -1,6 +1,6 @@
 import { Box, Text } from '@chakra-ui/react';
 import Head from 'next/head';
-import Link from 'next/link';
+import BlogPostList from '../component/blogList';
 import { blogPosts } from '../lib/data';
 
 export default function Home() {
@@ -11,23 +11,10 @@ export default function Home() {
         <meta name='Nextjs Blog' content='This is Blog created with nextjs' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <main>
-        <Text as='h1' color='red.600' fontWeight='bold'>
-          My Blog
-        </Text>
-        {blogPosts.map((item) => {
-          return (
-            <Box key={item.slug}>
-              <h2>
-                <Link href={`/blog/${item.slug}`}>
-                  <a>{item.title}</a>
-                </Link>
-              </h2>
-              <p>{item.date}</p>
-              <p>{item.content}</p>
-            </Box>
-          );
-        })}
+      <main className='w-8/12 text-center mx-auto'>
+        {blogPosts.map((item) => (
+          <BlogPostList key={item.slug} {...item} />
+        ))}
       </main>
     </Box>
   );
